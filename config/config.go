@@ -1,9 +1,11 @@
 package config
 
 import (
-	"log"
 	"os"
 	"strconv"
+	
+	"github.com/gofiber/fiber/v3/log"
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -17,10 +19,15 @@ type Config struct {
 }
 
 func LoadConfig() *Config {
+	// Load .env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Warn("Warning: .env file not found, using system environment variables")
+	}
 
 	dbPort, err := strconv.Atoi(os.Getenv("DB_PORT"))
 	if err != nil {
-		log.Fatal("Invalid DB_PORT")
+		log.Fatalf("Invalid DB_PORT: %v", err)
 	}
 
 	apiPort := os.Getenv("API_PORT")
